@@ -30,7 +30,7 @@
         "host": "login"
       },
       "tcp": {
-        "host": "world",
+        "ip": "world",
         "port": "9000"
       },
       "key": "somelongrandomstring12345asdfffff",

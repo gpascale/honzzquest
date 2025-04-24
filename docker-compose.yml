@@ -10,6 +10,7 @@ x-base-service: &base-service
     SERVER_SHORT_NAME: ${SERVER_SHORT_NAME:-EQMac Docker}
     SERVER_LONG_NAME: ${SERVER_LONG_NAME:-EQMac Docker}
     WAIT_HOSTS: db:3306
+    WAIT_TIMEOUT: 300
 
 services:
   shared:
@@ -18,7 +19,8 @@ services:
     volumes:
       - shared:/app/shared
     depends_on:
-      - db
+      db:
+        condition: service_started
 
   login:
     <<: *base-service
@@ -27,22 +29,29 @@ services:
       - 6000:6000/tcp
       - 6000:6000/udp
     depends_on:
-      - db
+      db:
+        condition: service_started
+      shared:
+        condition: service_completed_successfully
 
   world:
     <<: *base-service
     command: /app/world
     environment:
       <<: *base-environment
-      WAIT_PATHS: /app/shared/base_data
+      WAIT_PATHS: /app/shared/spells
     ports:
       - 9000:9000/tcp
       - 9000:9000/udp
     volumes:
       - shared:/app/shared
     depends_on:
-      - db
-      - shared
+      db:
+        condition: service_started
+      login:
+        condition: service_started
+      shared:
+        condition: service_completed_successfully
 
   zone:
     <<: *base-service
@@ -53,8 +62,12 @@ services:
     volumes:
       - shared:/app/shared
     depends_on:
-      - db
-      - world
+      db:
+        condition: service_started
+      world:
+        condition: service_started
+      shared:
+        condition: service_completed_successfully
 
   boats:
     <<: *base-service
@@ -65,15 +78,23 @@ services:
     volumes:
       - shared:/app/shared
     depends_on:
-      - db
-      - world
+      db:
+        condition: service_started
+      world:
+        condition: service_started
+      shared:
+        condition: service_completed_successfully
 
   queryserv:
     <<: *base-service
     command: /app/queryserv
     depends_on:
-      - db
-      - world
+      db:
+        condition: service_started
+      world:
+        condition: service_started
+      shared:
+        condition: service_completed_successfully
 
   ucs:
     <<: *base-service
@@ -82,8 +103,12 @@ services:
       - 7778:7778/tcp
       - 7778:7778/udp
     depends_on:
-      - db
-      - world
+      db:
+        condition: service_started
+      world:
+        condition: service_started
+      shared:
+        condition: service_completed_successfully
 
   db:
     build:

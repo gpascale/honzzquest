@@ -1,9 +1,12 @@
 [submodule "Server"]
 	path = Server
 	url = https://github.com/EQMacEmu/Server
+	branch = main
 [submodule "Quests"]
 	path = Quests
 	url = https://github.com/EQMacEmu/quests
+	branch = main
 [submodule "Maps"]
 	path = Maps
 	url = https://github.com/EQMacEmu/Maps
+	branch = main
