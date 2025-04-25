@@ -14,11 +14,7 @@
       "password": "${DATABASE_PASSWORD}",
       "db": "${DATABASE_NAME}"
     },
-    "chatserver": {
-      "host": "${SERVER_ADDRESS}",
-      "port": "7778"
-    },
-    "mailserver": {
+    "ucs": {
       "host": "${SERVER_ADDRESS}",
       "port": "7778"
     },
@@ -31,7 +27,12 @@
       },
       "tcp": {
         "ip": "world",
-        "port": "9000"
+        "port": "9001"
+      },
+      "telnet": {
+        "ip": "0.0.0.0",
+        "port": "9000",
+        "enabled": "true"
       },
       "key": "somelongrandomstring12345asdfffff",
       "shortname": "${SERVER_SHORT_NAME}",

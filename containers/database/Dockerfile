@@ -1,4 +1,4 @@
-FROM mariadb:10.5
+FROM mariadb:lts
 
 ADD Server/utils/sql/database_full/alkabor_2025-04-23-10_14.tar.gz /docker-entrypoint-initdb.d
 ADD Server/loginserver/login_util/tblloginserversettings.sql /docker-entrypoint-initdb.d
