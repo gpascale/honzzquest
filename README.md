@@ -10,7 +10,7 @@
 
 ```bash
 # Clone this repo with submodules
-git clone --recurse-submodules https://github.com/nickgal/EQMacDocker
+git clone --single-branch --branch takp --recurse-submodules https://github.com/nickgal/EQMacDocker
 cd EQMacDocker
 
 # Create .env from the example, be sure to update SERVER_ADDRESS
