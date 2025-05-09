@@ -11,6 +11,9 @@ x-base-service: &base-service
     SERVER_LONG_NAME: ${SERVER_LONG_NAME:-EQMac Docker}
     WAIT_HOSTS: db:3306
     WAIT_TIMEOUT: 300
+  cap_add:
+    # For GDB traces but it has security implications
+    - SYS_PTRACE
 
 services:
   shared:
