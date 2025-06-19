@@ -1,6 +1,6 @@
-FROM debian:12-slim as builder
+FROM debian:12-slim AS builder
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt install -y \
     bash \
@@ -32,7 +32,7 @@ RUN mkdir -p build && \
 
 FROM debian:12-slim
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt install -y \
     bash \
