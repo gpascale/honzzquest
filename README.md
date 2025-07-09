@@ -1,3 +1,5 @@
+# FORKED FROM EQMacDocker on Jul 6, 2025
+
 # EQMacDocker
 
 ## Requirements

@@ -96,6 +96,8 @@ services:
       MYSQL_DATABASE: ${DATABASE_NAME:-eq}
     volumes:
       - database:/var/lib/mysql
+    ports:
+      - 3306:3306
 
 volumes:
   shared:
