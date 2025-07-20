@@ -3,8 +3,8 @@
     "zones": {
       "defaultstatus": "0",
       "ports": {
-        "low": "7000",
-        "high": "7400"
+        "low": "7001",
+        "high": "7401"
       }
     },
     "qsdatabase": {
@@ -15,11 +15,11 @@
       "db": "${DATABASE_NAME}"
     },
     "chatserver": {
-      "host": "${SERVER_ADDRESS}",
+      "host": "ucs",
       "port": "7778"
     },
     "mailserver": {
-      "host": "${SERVER_ADDRESS}",
+      "host": "ucs",
       "port": "7778"
     },
     "world": {
@@ -31,6 +31,7 @@
       },
       "tcp": {
         "host": "world",
+        "ip": "world",
         "port": "9000"
       },
       "key": "somelongrandomstring12345asdfffff",

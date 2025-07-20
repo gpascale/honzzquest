@@ -28,7 +28,7 @@ WORKDIR /source
 RUN mkdir -p build && \
     cd build && \
     cmake -G 'Unix Makefiles' .. && \
-    make -j `grep -P '^core id\t' /proc/cpuinfo | sort -u | wc -l`
+    make -j4
 
 FROM debian:12-slim
 

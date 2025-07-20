@@ -1,1 +1,4 @@
 .env
+.vscode
+dev-logs
+dev-shared

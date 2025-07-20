@@ -1,0 +1,39 @@
+FROM debian:12-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt install -y \
+  bash \
+  build-essential \
+  cmake \
+  cpp \
+  debconf-utils \
+  g++ \
+  gcc \
+  gettext-base \
+  libboost-dev \
+  libcurl4-openssl-dev \
+  liblua5.1-dev \
+  libmariadb-dev \
+  libsodium-dev \
+  libssl-dev \
+  lua5.1 \
+  lua-bitop \
+  make \
+  mariadb-client \
+  gdb \
+  nano \
+  uuid-dev
+
+
+WORKDIR /app
+
+ADD Server/loginserver/login_util/*.conf /app/
+ADD Server/utils/patches/*.conf /app/
+  
+ADD Maps /app/Maps
+ADD Quests /app/quests
+
+ADD dev-entrypoint.sh /dev-entrypoint.sh
+
+ENTRYPOINT [ "/dev-entrypoint.sh" ]

@@ -1,75 +1,127 @@
+version: "3.8"
 x-base-service: &base-service
-  build:
-    context: .
-    dockerfile: containers/eqemu-server/Dockerfile
+  platform: linux/amd64
+  image: eqemu-base
   environment: &base-environment
     DATABASE_USER: ${DATABASE_USER:-eq}
     DATABASE_PASSWORD: ${DATABASE_PASSWORD:-eq}
     DATABASE_NAME: ${DATABASE_NAME:-eq}
+    DATABASE_HOST: ${DATABASE_HOST:-localhost}
+    DATABASE_PORT: ${DATABASE_PORT:-3306}
     SERVER_ADDRESS: ${SERVER_ADDRESS}
     SERVER_SHORT_NAME: ${SERVER_SHORT_NAME:-EQMac Docker}
     SERVER_LONG_NAME: ${SERVER_LONG_NAME:-EQMac Docker}
     WAIT_HOSTS: db:3306
+  volumes:
+    - ./Maps:/app/Maps
+    - ./Quests:/app/quests
+    - shared:/app/shared
+    - eqemu_bin:/app
+    - ./containers/eqemu-server/docker-entrypoint.sh:/docker-entrypoint.sh
+    - ./containers/eqemu-server/login.template.ini:/app/login.template.ini
+    - ./containers/eqemu-server/eqemu_config.template.json:/app/eqemu_config.template.json
+    - ./Server/loginserver/login_util:/app/login_util
+    - ./Server/utils/patches:/app/patches
+    - ./dev-logs:/app/logs
 
 services:
+  eqemu-base:
+    platform: linux/amd64
+    image: eqemu-base
+    build:
+      context: .
+      dockerfile: containers/eqemu-server/Dockerfile.container
+
+  dev:
+    platform: linux/amd64
+    environment:
+      <<: *base-environment
+    build:
+      context: .
+      dockerfile: containers/eqemu-server/Dockerfile.dev
+    volumes:
+      - ./Server:/app/Server
+      - ./Maps:/app/Maps
+      - ./Quests:/app/quests
+      - ./containers/eqemu-server:/app/dev-scripts
+      - eqemu_build:/app/Server/build
+      - eqemu_bin:/eqemu_bin
+      - ./containers/eqemu-server/docker-entrypoint.sh:/docker-entrypoint.sh
+      - ./containers/eqemu-server/login.template.ini:/app/login.template.ini
+      - ./containers/eqemu-server/eqemu_config.template.json:/app/eqemu_config.template.json
+      - ./Server/loginserver/login_util:/app/login_util
+      - ./Server/utils/patches:/app/patches
+      - ./dev-logs:/app/logs
+      - ./dev-shared:/app/shared
+      - ./dev-entrypoint.sh:/app/dev-entrypoint.sh
+    working_dir: /app/Server
+    stdin_open: true
+    tty: true
+
   shared:
     <<: *base-service
+    image: eqemu-base
+    working_dir: /app
     command: /app/shared_memory
-    volumes:
-      - shared:/app/shared
     depends_on:
       - db
+      - eqemu-base
 
   login:
     <<: *base-service
+    image: eqemu-base
+    working_dir: /app
     command: /app/loginserver
     ports:
       - 6000:6000/tcp
       - 6000:6000/udp
     depends_on:
       - db
+      - world
+      - eqemu-base
 
   world:
     <<: *base-service
+    image: eqemu-base
+    working_dir: /app
     command: /app/world
     environment:
       <<: *base-environment
-      WAIT_PATHS: /app/shared/base_data
+      WAIT_PATHS: /app/shared/items
     ports:
       - 9000:9000/tcp
       - 9000:9000/udp
-    volumes:
-      - shared:/app/shared
     depends_on:
       - db
-      - shared
+      - eqemu-base
 
   zone:
     <<: *base-service
-    command: ['/app/eqlaunch', 'dynzone1']
+    image: eqemu-base
+    command: ["/app/eqlaunch", "dynzone1"]
+    working_dir: /app
     ports:
-      - 7000-7374:7000-7374/tcp
-      - 7000-7374:7000-7374/udp
-    volumes:
-      - shared:/app/shared
+      - 7001-7375:7001-7375/tcp
+      - 7001-7375:7001-7375/udp
     depends_on:
       - db
       - world
 
   boats:
     <<: *base-service
-    command: ['/app/eqlaunch', 'boats']
+    image: eqemu-base
+    working_dir: /app
+    command: ["/app/eqlaunch", "boats"]
     ports:
-      - 7375-7400:7375-7400/tcp
-      - 7375-7400:7375-7400/udp
-    volumes:
-      - shared:/app/shared
+      - 7376-7401:7376-7401/tcp
+      - 7376-7401:7376-7401/udp
     depends_on:
       - db
       - world
 
   queryserv:
     <<: *base-service
+    working_dir: /app
     command: /app/queryserv
     depends_on:
       - db
@@ -77,6 +129,7 @@ services:
 
   ucs:
     <<: *base-service
+    working_dir: /app
     command: /app/ucs
     ports:
       - 7778:7778/tcp
@@ -90,13 +143,17 @@ services:
       context: .
       dockerfile: containers/database/Dockerfile
     environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: enabled
-      MYSQL_USER: ${DATABASE_USER:-eq}
-      MYSQL_PASSWORD: ${DATABASE_PASSWORD:-eq}
-      MYSQL_DATABASE: ${DATABASE_NAME:-eq}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD:-honzzquest}
+      MYSQL_USER: ${DATABASE_USER:-honzzquest}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:-honzzquest}
+      MYSQL_DATABASE: ${DATABASE_NAME:-honzzquest}
     volumes:
       - database:/var/lib/mysql
+    ports:
+      - 3306:3306
 
 volumes:
   shared:
   database:
+  eqemu_build:
+  eqemu_bin:

@@ -1,0 +1,49 @@
+FROM debian:12-slim
+
+RUN apt update && apt install -y \
+  bash \
+  build-essential \
+  cmake \
+  cpp \
+  debconf-utils \
+  g++ \
+  gcc \
+  gettext-base \
+  libboost-dev \
+  libcurl4-openssl-dev \
+  liblua5.1-dev \
+  libmariadb-dev \
+  libsodium-dev \
+  libssl-dev \
+  lua5.1 \
+  lua-bitop \
+  make \
+  mariadb-client \
+  gdb \
+  nano \
+  uuid-dev \
+  libmariadb3 \
+  libssl3 \
+  bash \
+  gdb \
+  gettext-base \
+  git \
+  liblua5.1-0 \
+  lua5.1 \
+  lua-bitop \
+  mariadb-client \
+  nano
+
+COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
+
+ADD Server/loginserver/login_util/*.conf /app/
+ADD Server/utils/patches/*.conf /app/
+  
+ADD Maps /app/Maps
+ADD Quests /app/quests
+
+ADD containers/eqemu-server/container-entrypoint.sh /container-entrypoint.sh
+RUN chmod +x /container-entrypoint.sh
+
+ENTRYPOINT [ "/container-entrypoint.sh" ]
+
